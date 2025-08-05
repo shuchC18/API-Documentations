@@ -1,0 +1,151 @@
+openapi: 3.0.0
+info:
+  title: OpenWeatherMap API
+  description: OpenWeatherMap API Documentation
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/xxxxxx-8d7/Weather_API_Doc/1.0.0
+  description: This is a weather API. You can use this to access current weather data for any desired location.
+- url: https://virtserver.swaggerhub.com/xxxxxx-8d7/Weather_API/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+- name: Weather Forecasters
+  description: This is for Weather Forecasters
+paths:
+  /weather:
+    get:
+      tags:
+      - developers
+      summary: Get current weather data for a city
+      description: |
+        By passing in the latitude,longitude, units, and language, you can search for current weather conditions for any location. You must include your API key as the `appid` query parameter.
+      operationId: GetCurrentWeather
+      parameters:
+      - name: q
+        in: query
+        description: City Name
+        required: false
+        schema:
+          type: string
+      - name: lat
+        in: query
+        description: "Latitude of location (e.g., 35)"
+        required: false
+        schema:
+          type: number
+          format: float
+      - name: lon
+        in: query
+        description: "Longitude of location (e.g., 139)"
+        required: false
+        schema:
+          type: number
+          format: float
+      - name: zip
+        in: query
+        description: "Zip code (e.g., 94040,us)"
+        required: false
+        schema:
+          type: string
+      - name: units
+        in: query
+        description: "Units of measurement. Options: `standard` `metric`, `imperial`"
+        required: false
+        schema:
+          type: string
+          enum:
+          - standard
+          - metric
+          - imperial
+      - name: lang
+        in: query
+        description: "Language of the response (e.g., en, es, fr)"
+        required: false
+        schema:
+          type: string
+      - name: appid
+        in: query
+        description: Your API key
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: succesful weather data retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeatherResponse"
+        "400":
+          description: bad input parameter
+        "401":
+          description: Unauthorized – Invalid API key
+        "404":
+          description: City not found
+components:
+  schemas:
+    WeatherResponse:
+      type: object
+      properties:
+        coord:
+          $ref: "#/components/schemas/WeatherResponse_coord"
+        weather:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeatherResponse_weather"
+        main:
+          $ref: "#/components/schemas/WeatherResponse_main"
+        name:
+          type: string
+          example: Tokyo
+        dt:
+          type: integer
+          description: Time of data calculation (UNIX timestamp)
+          example: 1605182400
+    WeatherResponse_coord:
+      type: object
+      properties:
+        lon:
+          type: number
+          example: 139
+        lat:
+          type: number
+          example: 35
+    WeatherResponse_weather:
+      type: object
+      properties:
+        main:
+          type: string
+          example: Rain
+        description:
+          type: string
+          example: light rain
+        icon:
+          type: string
+          example: 10d
+    WeatherResponse_main:
+      type: object
+      properties:
+        temp:
+          type: number
+          format: float
+          example: 298.77
+        feels_like:
+          type: number
+          format: float
+          example: 298.74
+        pressure:
+          type: integer
+          example: 1013
+        humidity:
+          type: integer
+          example: 87
